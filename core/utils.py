@@ -5,7 +5,7 @@ def eprint(*args, **kwargs) -> None:
     """ Print stderr """
     print(*args, file=sys.stderr, **kwargs)
 
-"""
+
 def api_message(type: str, msg: str, log: bool = True) -> None:
 
     color: str = ""
@@ -39,7 +39,7 @@ def api_message(type: str, msg: str, log: bool = True) -> None:
 
     if type in ['w', 'i', 'd'] and AppState.STDOUT_ENABLE:
         print("{0}[{1}]{2} {3}".format(color, datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"), end, msg))
-"""
+
 
 def api_validate_form(media: dict, schema: dict) -> bool:
     """ Valide http json form and catch them """
