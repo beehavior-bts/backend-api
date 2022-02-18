@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     username    VARCHAR(24) NOT NULL,
     password    VARCHAR(32) NOT NULL,
     is_admin    BOOLEAN NOT NULL DEFAULT FALSE,
-    phone       VARCHAR(15) DEFAULT NULL, -- format: +33456987423
+    phone       VARCHAR(12) DEFAULT NULL, -- format: +33456987423
     updated_on  TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     created_on  TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
 );
