@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: pg-beehavior
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=beehavior
+      - POSTGRES_PASSWORD=beehavior
+      - POSTGRES_DB=beehavior
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./database/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    # command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+volumes:
+  db:
+    driver: local
+
+#  api:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - database
+#    networks:
+#      - default
+#    ports:
+#      - "8080:8080"
+    
