@@ -1,4 +1,4 @@
-import os, pathlib, git
+import os, pathlib, git, logging
 
 GIT_CURRENT_TAG: str
 try:
@@ -8,6 +8,14 @@ except Exception as e:
     print(f'[WARN] Failed to get Git repository, error : {e}')
     GIT_CURRENT_TAG = "v0.0.1-dev"
 
+
+LOG_LEVEL = {
+    "critical"  : logging.CRITICAL,
+    "error"     : logging.ERROR,
+    "warning"   : logging.WARNING,
+    "info"      : logging.INFO,
+    "debug"     : logging.DEBUG
+}
 
 class AppState:
     """ Describe application variable state """
@@ -19,6 +27,11 @@ class AppState:
 
     HOST: str       = os.environ.get('APP_HOST', '127.0.0.1')
     PORT: int       = int(os.environ.get('APP_PORT', 8080))
+
+    LOGGING_LEVEL   = LOG_LEVEL["debug"]
+    LOGGING_ENABLE: bool  = False
+    STDERR_ENABLE: bool   = True
+    STDOUT_ENABLE: bool   = True
 
     class Tools:
         """ Describe other package configuration """
