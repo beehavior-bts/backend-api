@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install wheel && pip wheel --wheel-dir=/build-app/wheels -r requirements.txt
 
 FROM python:3.8.12-alpine3.15 AS runner
-RUN apk update --no-cache && apk add --no-cache libpq
+RUN apk update --no-cache && apk add --no-cache libpq libev
 WORKDIR /app
 COPY . .
 COPY --from=builder /build-app/wheels /app/wheels
