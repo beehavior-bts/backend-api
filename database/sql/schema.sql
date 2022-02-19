@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     id          UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
     email       VARCHAR(150) NOT NULL UNIQUE,
     username    VARCHAR(24) NOT NULL,
-    password    VARCHAR(32) NOT NULL,
+    password    VARCHAR(100) NOT NULL,
     is_admin    BOOLEAN NOT NULL DEFAULT FALSE,
     phone       VARCHAR(12) DEFAULT NULL, -- format: +33456987423
     updated_on  TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
