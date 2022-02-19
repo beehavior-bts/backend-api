@@ -1,5 +1,5 @@
 import psycopg2
-# from utils.core import api_message
+from core.utils import api_message
 from core.config import AppState
 
 class PGDatabase:
@@ -17,10 +17,10 @@ class PGDatabase:
                     port=AppState.Database.PORT,
                     dbname=AppState.Database.NAME
                 )
-                # api_message("i", f'encoding : {self._conn.encoding}')
+                api_message("i", f'encoding : {self._conn.encoding}')
             except psycopg2.DatabaseError as e:
-                # api_message("d", f'Failed to connect to PostgreSQL database, error : {e}')
+                api_message("d", f'Failed to connect to PostgreSQL database, error : {e}')
                 exit(0)
 
-        # api_message("d", f'Success to connect to PostgreSQL database')
+        api_message("d", f'Success to connect to PostgreSQL database')
         return self._conn
