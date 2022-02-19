@@ -1,7 +1,8 @@
-import os, pathlib, git, logging
+import os, pathlib, logging
 
 GIT_CURRENT_TAG: str
 try:
+    import git
     REPOSITORY          = git.Repo(pathlib.Path().absolute())
     GIT_CURRENT_TAG     = str(next((tag for tag in REPOSITORY.tags if tag.commit == REPOSITORY.head.commit), "v0.0.1-dev"))
 except Exception as e:
