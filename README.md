@@ -2,6 +2,8 @@
 
 This service provide backend Rest API, webhook listener and SQL database
 
+![Architecture Of BeeHavior Backend](https://user-images.githubusercontent.com/64791937/154861399-3d7c7cbb-50aa-4273-af98-e3afac526ffa.png)
+
 ## Introduction
 
 ## Quickstart
