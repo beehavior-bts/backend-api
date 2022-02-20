@@ -17,7 +17,7 @@ This service provide backend Rest API, webhook listener and SQL database
 > Attention ! 4GB of memory is only for building dockerfile
 > You can run the entire program with only 1.5GB of memory
 
-#### Install Requiments Debian
+#### Install Requirments Debian
 
 ```sh
 $ sudo apt remove docker docker-engine docker.io containerd runc
@@ -28,7 +28,7 @@ $ sudo apt update
 $ sudo apt install docker-ce docker-ce-cli containerd.io docker-compose git
 ```
 
-#### Install Requiments Ubuntu
+#### Install Requirments Ubuntu
 
 ```sh
 $ sudo apt remove docker docker-engine docker.io containerd runc
@@ -42,7 +42,7 @@ $ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose git
 ### Building && Launching
 
 ```sh
-$ git clone https://github.com/beehavior-bts/backend-api.git
+$ git clone git@github.com:beehavior-bts/backend-api.git
 $ cd backend-api
 $ sudo docker-compose up -d
 ```
