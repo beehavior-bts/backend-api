@@ -65,5 +65,6 @@ $ sudo pacman -S docker git docker-compose curl
 ```sh
 $ git clone git@github.com:beehavior-bts/backend-api.git
 $ cd backend-api
+$ sudo systemctl start docker
 $ sudo docker-compose up -d --build
 ```
