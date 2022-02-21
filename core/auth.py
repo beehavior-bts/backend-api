@@ -1,4 +1,4 @@
-import argon2, falcon
+import argon2, falcon, datetime
 from authlib import jose
 from core.config import AppState
 
@@ -44,7 +44,7 @@ class AccountAuthToken():
         # api_message("d", f'roles type : {type(roles)}')
         header = {"alg": AppState.AccountToken.TYPE}
         try:
-            payload["exp"] = datetime.datetime.utcnow() + datetime.timedelta(seconds=duration)
+            payload["exp"] = datetime.datetime.utcnow() + datetime.timedelta(seconds=duration_s)
         except Exception as e:
             print(f'Failed to deserialize payload : {e}')
             # api_message('d', f'Failed to deserialize payload : {e}')
@@ -52,7 +52,7 @@ class AccountAuthToken():
             return jose.jwt.encode(
                 header,
                 payload,
-                AppState.AccountToken.PRIVATE_KEY if AppState.AccountToken.TYPE == "RS256" else AppState.AccountToken.SECRET,
+                AppState.AccountToken.PRIVATE if AppState.AccountToken.TYPE == "RS256" else AppState.AccountToken.SECRET,
                 check=False
             ).decode('utf-8')
         except Exception as e:
@@ -67,7 +67,7 @@ class AccountAuthToken():
             token = bytes(token, encoding="utf-8")
             res = jose.jwt.decode(
                 token, 
-                AppState.AccountToken.PUBLIC_KEY if AppState.AccountToken.TYPE == "RS256" else AppState.AccountToken.SECRET
+                AppState.AccountToken.PUBLIC if AppState.AccountToken.TYPE == "RS256" else AppState.AccountToken.SECRET
             )
             res.validate()
             # api_message("d", f'payload token content : {res}')
