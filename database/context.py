@@ -4,7 +4,7 @@ from core.config import AppState
 
 class PGDatabase:
 
-    def connect(self) -> bool:
+    def connect_to_api(self) -> bool:
         for i in range(2, 6):
             try:
                 AppState.Database.CONN = psycopg2.connect(
@@ -23,3 +23,12 @@ class PGDatabase:
                 time.sleep(2)
         api_message("d", f'Failed to connect to postgres server')
         exit(1)
+    
+    def get_connexion(self):
+        return psycopg2.connect(
+            host=AppState.Database.HOST,
+            user=AppState.Database.USER,
+            password=AppState.Database.PASS,
+            port=AppState.Database.PORT,
+            dbname=AppState.Database.NAME
+        )
