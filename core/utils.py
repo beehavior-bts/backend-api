@@ -50,3 +50,14 @@ def api_validate_form(media: dict, schema: dict) -> bool:
         raise falcon.HTTPBadRequest(title="BAD_REQUEST", description="Request form not found")
     else:
         return True
+
+def get_keypair_in_db(name: str) -> list:
+    q1 = None
+    with AppState.Database.CONN.cursor() as cur:
+        cur.execute("SELECT public_key, private_key FROM keypairs WHERE type = %s", (name,))
+        q1 = cur.fetchone()
+    
+    if q1 is None:
+        raise RuntimeError(f'Failed to get keypair for {name}')
+    
+    return [q1[0], q1[1]]
