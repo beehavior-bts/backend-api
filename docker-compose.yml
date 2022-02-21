@@ -14,7 +14,8 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     # - ./database/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-      - ./database/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/sql/content.sql:/docker-entrypoint-initdb.d/02-content.sql
 #    networks:
 #      - default
     # command: postgres -c config_file=/etc/postgresql/postgresql.conf
