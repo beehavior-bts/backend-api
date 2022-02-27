@@ -13,7 +13,7 @@ This service provide backend Rest API, webhook listener and SQL database
     - [Install Requirements Ubuntu](#install-requirements-ubuntu)
     - [Install Requirements Fedora](#install-requirements-fedora)
     - [Install Requirements Arch Linux](#install-requirements-arch-linux)
-  - [Building and Launching](#building-&&-launching)
+  - [Building and Launching](#building--launching)
 - [API Documentation](#api-documentation)
 - [License](#license)
 
