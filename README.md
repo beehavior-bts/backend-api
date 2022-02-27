@@ -11,13 +11,12 @@ This service provide backend Rest API, webhook listener and SQL database
 ### Requirements 
 
 - Linux host (virtualized or bare metal)
-- 4GB Memory
+- Memory :
+  - 3GB Memory for docker build
+  - 1.5GB Memory for docker run
 - Git
 - Docker Latest Version
 - Docker Compose Latest Version
-
-> Attention ! 4GB of memory is only for building dockerfile
-> You can run the entire program with only 1.5GB of memory
 
 #### Install Requirements Debian
 
