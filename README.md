@@ -80,3 +80,69 @@ $ cd backend-api
 $ sudo systemctl start docker
 $ sudo docker-compose up -d --build
 ```
+
+# API Documentation
+
+## Login to an account
+
+### Request
+
+`POST /api/auth/login`
+
+    curl -X POST -i -H 'Content-Type: application/json' http://beehavior.com/api/auth/login -d '{"email": "admin@beehavior.com", "password": "Patate#12345"}'
+
+### Response
+
+    HTTP/1.1 200 OK
+    Server: nginx/1.21.4
+    Date: Mon, 21 Feb 2022 14:05:32 GMT
+    Content-Type: application/json
+    Content-Length: 959
+    Connection: keep-alive
+    access-control-allow-credentials: true
+    set-cookie: Token-Account=<YOUR_TOKEN>; Domain=.beehavior.com; HttpOnly; Max-Age=10800; Path=/; SameSite=Strict
+
+    {"title": "OK", "description": "Success to login", "content": {"id": "513cbde1c5f64315b88e75fa6cd71dc7", "username": "Admin", "token": "<YOUR_TOKEN>"}}
+
+## Get account informations
+
+### Request
+
+`GET /api/account/info`
+
+    curl -X GET -i -H 'Authorization: <YOUR_TOKEN>' http://beehavior.com/api/account/info
+
+### Response
+
+    HTTP/1.1 200 OK
+    Server: nginx/1.21.4
+    Date: Mon, 21 Feb 2022 19:52:31 GMT
+    Content-Type: application/json
+    Content-Length: 224
+    Connection: keep-alive
+
+    {"title": "OK", "description": "Sucess to get account and hives info", "content": {"id": "513cbde1c5f64315b88e75fa6cd71dc7", "username": "Admin", "email": "admin@beehavior.com", "phone": null, "is_admin": true, "hives": []}}
+
+# License
+
+MIT License
+
+Copyright (c) 2022 beehavior-bts
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
