@@ -5,7 +5,7 @@ This service provide backend Rest API, webhook listener and SQL database
 ## Table of contents
 
 - [Introduction](#introduction)
-- [Arcgitecture](#architecture)
+- [Architecture](#architecture)
 - [Quickstart](#quickstart)
   - [System Requirements](#requirements)
     - [Install Requirements Debian](#install-requirements-debian)
@@ -78,7 +78,7 @@ $ sudo pacman -S docker git docker-compose curl
 ### Building && Launching
 
 ```sh
-$ git clone git@github.com:beehavior-bts/backend-api.git
+$ git clone https://github.com/beehavior-bts/backend-api.git
 $ cd backend-api
 $ sudo systemctl start docker
 $ sudo docker-compose up -d --build
