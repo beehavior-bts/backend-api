@@ -27,9 +27,7 @@ This service provide backend Rest API, webhook listener and SQL database
 ### Requirements 
 
 - Linux host (virtualized or bare metal)
-- Memory :
-  - 3GB Memory for docker build
-  - 1.5GB Memory for docker run
+- 1GB of Memory for docker build and run
 - Git
 - Docker Latest Version
 - Docker Compose Latest Version
@@ -77,11 +75,18 @@ $ sudo pacman -S docker git docker-compose curl
 
 ### Building && Launching
 
+> Type this command if you want to run docker without sudo 
+> and add privilige to your user.
+
+```sh
+# usermod -aG docker sudo <user>
+```
+
 ```sh
 $ git clone https://github.com/beehavior-bts/backend-api.git
 $ cd backend-api
 $ sudo systemctl start docker
-$ sudo docker-compose up -d --build
+$ sudo docker-compose -f docker-compose-dev.yml up -d --build
 ```
 
 # API Documentation
@@ -92,7 +97,7 @@ $ sudo docker-compose up -d --build
 
 `POST /api/auth/login`
 
-    curl -X POST -i -H 'Content-Type: application/json' http://beehavior.com/api/auth/login -d '{"email": "admin@beehavior.com", "password": "Patate#12345"}'
+    curl -X POST -i -H 'Content-Type: application/json' http://beehavior.com/api/auth/login -d '{"email": "admin@beehavior.com", "password": "Admin#12345"}'
 
 ### Response
 
