@@ -13,9 +13,7 @@ CREATE TABLE IF NOT EXISTS prc2022.accounts (
 CREATE TABLE IF NOT EXISTS prc2022.hives (
     id          VARCHAR(16) PRIMARY KEY UNIQUE NOT NULL,
     name        VARCHAR(24) NOT NULL,
-    f_owner     INT NOT NULL,
-    FOREIGN KEY (f_owner) 
-        REFERENCES accounts(id)
+    f_owner     INT NOT NULL
 ) ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_ci;
 
 
@@ -25,9 +23,7 @@ CREATE TABLE IF NOT EXISTS prc2022.metrics (
     humidity    INT NOT NULL, -- max: 100, min: 0, unity: %
     temperature FLOAT NOT NULL, -- unity: °C
     mass        FLOAT NOT NULL, -- unity: Kg
-    created_on  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (f_hive) 
-        REFERENCES hives(id)
+    created_on  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_ci;
 
 
@@ -36,9 +32,7 @@ CREATE TABLE IF NOT EXISTS prc2022.alerts (
     f_hive      VARCHAR(16) NOT NULL,
     rule        ENUM('HUMIDITY_LESS_THAN', 'HUMIDITY_MORE_THAN', 'TEMPERATURE_LESS_THAN', 'TEMPERATURE_MORE_THAN', 'MASS_LESS_THAN', 'MASS_MORE_THAN') NOT NULL,
     value       FLOAT NOT NULL,
-    last_notify TIMESTAMP DEFAULT NULL,
-    FOREIGN KEY (f_hive)
-        REFERENCES hives(id)
+    last_notify TIMESTAMP DEFAULT NULL
 ) ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_ci;
 
 
