@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS prc2022.hives (
 CREATE TABLE IF NOT EXISTS prc2022.metrics (
     id          INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     f_hive      VARCHAR(16) NOT NULL,
-    humidity    INT NOT NULL, -- max: 100, min: 0, unity: %
+    humidity    INT NOT NULL CHECK (humidity <= 100), -- max: 100, min: 0, unity: %
     temperature FLOAT NOT NULL, -- unity: °C
     mass        FLOAT NOT NULL, -- unity: Kg
     created_on  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -43,3 +43,8 @@ CREATE TABLE IF NOT EXISTS prc2022.keypairs (
     private_key BLOB NOT NULL,
     created_on  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_ci;
+
+
+INSERT INTO prc2022.accounts (email, username, password, is_admin) 
+    VALUES 
+('admin@beehavior.com', 'Beehavior Admin', '$2y$10$JXT/sEJkC6crFdJxPWQnreEPTDnujWqOIgQmGjqtKHi.xNdmLiIzW', TRUE);
