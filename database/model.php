@@ -1,11 +1,19 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require 'jwt/src/BeforeValidException.php';
+require 'jwt/src/ExpiredException.php';
+require 'jwt/src/SignatureInvalidException.php';
+require 'jwt/src/JWT.php';
+require 'jwt/src/Key.php';
 
 require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
+
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 define("DB_HOST", "by93828-001.privatesql");
 define("DB_PORT", 35146);
@@ -17,6 +25,30 @@ define("EMAIL_SMTP", "mail.riseup.net");
 define("EMAIL_ADDR", "beehavior-service@riseup.net");
 define("EMAIL_USER", "beehavior-service");
 define("EMAIL_PASS", "=j357un5eYV&Fx$9??RS@bee");
+
+define("JWT_SECRET", "Rywuk8AGyZbDCYSm");
+
+function gen_jwt_token($account_id) {
+    date_default_timezone_set('UTC');
+    $nowtime = time();
+    $tk_content = array(
+        "iat" => $nowtime,
+        "exp" => $nowtime + (60 * 60 * 24 * 14), // 2 weeks
+        "uid" => intval($account_id)
+    );
+
+    $jwt = JWT::encode($tk_content, JWT_SECRET, "HS256");
+    return $jwt;
+}
+
+function check_jwt_token($token) {
+    //
+}
+
+function decode_jwt_token($token) {
+    $decoded = JWT::decode($token, new Key(JWT_SECRET, "HS256"));
+    return $decoded;
+}
 
 class DatabaseContext {
     private $user = DB_USER;
@@ -30,7 +62,7 @@ class DatabaseContext {
         try {
             $bdd = new PDO(
                 'mysql:host='.$this->host.';port='.$this->port.';dbname='.$this->dbname.';charset=utf8', 
-                $this->user, 
+                $this->user,
                 $this->password
             );
             $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
@@ -57,8 +89,24 @@ class Account extends DatabaseContext {
         $stmt->execute();
     }
 
-    public function get_by_email() {
+    public function get_by_email($email) {
+        $query = "SELECT * FROM prc2022.accounts WHERE email = :email";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            ':email' => $email
+        ]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res;
+    }
 
+    public function get_all($email) {
+        $query = "SELECT * FROM prc2022.accounts";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            ':email' => $email
+        ]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     public function insert($email, $username) {

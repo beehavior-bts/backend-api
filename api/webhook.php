@@ -20,8 +20,7 @@ $mass = floatval($metrics[2]);
 $dbmetric = new Metric();
 $dbmetric->insert($end_device_id, $humidity, $temperature, $mass);
 
-$dbaccount = new Account();
-$dbaccount->insert("ristich.esteban.lgm@gmail.com", "Estéban");
+// $dbaccount->insert("ristich.esteban.lgm@gmail.com", "Estéban");
 /*
 $dbaccount = new Account();
 */
