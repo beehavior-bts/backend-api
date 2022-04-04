@@ -28,13 +28,14 @@ define("EMAIL_PASS", "=j357un5eYV&Fx$9??RS@bee");
 
 define("JWT_SECRET", "Rywuk8AGyZbDCYSm");
 
-function gen_jwt_token($account_id) {
+function gen_jwt_token($account_id, $is_admin=false) {
     date_default_timezone_set('UTC');
     $nowtime = time();
     $tk_content = array(
         "iat" => $nowtime,
         "exp" => $nowtime + (60 * 60 * 24 * 14), // 2 weeks
-        "uid" => intval($account_id)
+        "uid" => intval($account_id),
+        "is_admin" => $is_admin
     );
 
     $jwt = JWT::encode($tk_content, JWT_SECRET, "HS256");
