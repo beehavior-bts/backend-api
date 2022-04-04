@@ -14,10 +14,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "title" => "OK",
             "description" => "Token has been generated",
             "content" => array(
-                "token" => "Bearer ".$token
+                "token" => $token
             )
         ));
         echo $resp;
+    } else {
+        http_response_code(400);
     }
 }
 ?>
