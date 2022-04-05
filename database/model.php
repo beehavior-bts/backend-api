@@ -35,7 +35,7 @@ function gen_jwt_token($account_id, $is_admin=false) {
         "iat" => $nowtime,
         "exp" => $nowtime + (60 * 60 * 24 * 14), // 2 weeks
         "uid" => intval($account_id),
-        "is_admin" => $is_admin
+        "is_admin" => boolval($is_admin)
     );
 
     $jwt = JWT::encode($tk_content, JWT_SECRET, "HS256");
@@ -48,7 +48,8 @@ function check_jwt_token($token) {
 
 function decode_jwt_token($token) {
     $decoded = JWT::decode($token, new Key(JWT_SECRET, "HS256"));
-    return $decoded;
+    $array_decoded = (array) $decoded;
+    return $array_decoded;
 }
 
 class DatabaseContext {
@@ -100,13 +101,11 @@ class Account extends DatabaseContext {
         return $res;
     }
 
-    public function get_all($email) {
-        $query = "SELECT * FROM prc2022.accounts";
+    public function get_all() {
+        $query = "SELECT id, username, email, phone FROM prc2022.accounts WHERE is_admin IS FALSE";
         $stmt = $this->connection->prepare($query);
-        $stmt->execute([
-            ':email' => $email
-        ]);
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $res;
     }
 
