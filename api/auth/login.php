@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dbaccount = new Account();
     $account = $dbaccount->get_by_email($content["email"]);
     if (password_verify($content["password"], $account["password"])) {
-        $token = gen_jwt_token($account["id"]);
+        $token = gen_jwt_token($account["id"], $account["is_admin"]);
         $resp = json_encode(array(
             "title" => "OK",
             "description" => "Token has been generated",
