@@ -82,13 +82,14 @@ class Account extends DatabaseContext {
     private  $pass_char = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "%", "#", "&", "@", "$", "!", "="];
 
     public function get_info_by_id($account_id) {
-        $query = "SELECT t2.id, t2.email, t2.username, t1.id AS hive_id, t1.name AS hive_name 
-            FROM hives AS t1 
-                INNER JOIN accounts AS t2 ON t1.f_owner = t2.id 
-            WHERE t2.id = ?";
+        $query = "SELECT id, email, username, is_admin, phone, updated_on, created_on FROM accounts
+            WHERE id = :id";
         $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(1, $account_id);
-        $stmt->execute();
+        $stmt->execute([
+            ':id' => $account_id
+        ]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     public function get_by_email($email) {
@@ -158,6 +159,16 @@ class Hive extends DatabaseContext {
             return true;
         else 
             return false;
+    }
+
+    public function get_info_by_owner($account_id) {
+        $query = "SELECT id, name FROM hives WHERE f_owner = :id";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            ':id' => $account_id
+        ]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 }
 
