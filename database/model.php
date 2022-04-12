@@ -28,13 +28,14 @@ define("EMAIL_PASS", "=j357un5eYV&Fx$9??RS@bee");
 
 define("JWT_SECRET", "Rywuk8AGyZbDCYSm");
 
-function gen_jwt_token($account_id) {
+function gen_jwt_token($account_id, $is_admin=false) {
     date_default_timezone_set('UTC');
     $nowtime = time();
     $tk_content = array(
         "iat" => $nowtime,
         "exp" => $nowtime + (60 * 60 * 24 * 14), // 2 weeks
-        "uid" => intval($account_id)
+        "uid" => intval($account_id),
+        "is_admin" => boolval($is_admin)
     );
 
     $jwt = JWT::encode($tk_content, JWT_SECRET, "HS256");
@@ -47,7 +48,8 @@ function check_jwt_token($token) {
 
 function decode_jwt_token($token) {
     $decoded = JWT::decode($token, new Key(JWT_SECRET, "HS256"));
-    return $decoded;
+    $array_decoded = (array) $decoded;
+    return $array_decoded;
 }
 
 class DatabaseContext {
@@ -80,13 +82,14 @@ class Account extends DatabaseContext {
     private  $pass_char = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "%", "#", "&", "@", "$", "!", "="];
 
     public function get_info_by_id($account_id) {
-        $query = "SELECT t2.id, t2.email, t2.username, t1.id AS hive_id, t1.name AS hive_name 
-            FROM hives AS t1 
-                INNER JOIN accounts AS t2 ON t1.f_owner = t2.id 
-            WHERE t2.id = ?";
+        $query = "SELECT id, email, username, is_admin, phone, updated_on, created_on FROM accounts
+            WHERE id = :id";
         $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(1, $account_id);
-        $stmt->execute();
+        $stmt->execute([
+            ':id' => $account_id
+        ]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     public function get_by_email($email) {
@@ -99,14 +102,21 @@ class Account extends DatabaseContext {
         return $res;
     }
 
-    public function get_all($email) {
-        $query = "SELECT * FROM prc2022.accounts";
+    public function get_all() {
+        $query = "SELECT id, username, email, phone FROM prc2022.accounts WHERE is_admin IS FALSE";
         $stmt = $this->connection->prepare($query);
-        $stmt->execute([
-            ':email' => $email
-        ]);
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $res;
+    }
+
+    public function del($account_id) {
+        $query = "DELETE FROM accounts WHERE id = ? OR email = ?";
+        $stmt = $this->connection->prepare($query);
+        if ($stmt->execute([$account_id, $account_id]))
+            return true;
+        else 
+            return false;
     }
 
     public function insert($email, $username) {
@@ -151,13 +161,75 @@ class Account extends DatabaseContext {
 
 class Hive extends DatabaseContext {
     public function insert($lora_eui, $owner_id, $name) {
-        $query = "INSERT INTO prc2022.hives (id, f_owner, name) VALUES ('".$lora_eui."', '".$owner_id."', '".$name."')";
-        $this->connection->prepare($query);
+        $query = "INSERT INTO prc2022.hives (id, f_owner, name) VALUES (?, ?, ?)";
         $stmt = $this->connection->prepare($query);
-        if ($stmt->execute())
+        if ($stmt->execute([$lora_eui, $owner_id, $name]))
             return true;
         else 
             return false;
+    }
+
+    public function get_info_by_owner($account_id) {
+        $query = "SELECT id, name FROM hives WHERE f_owner = :id";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            ':id' => $account_id
+        ]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+    public function get_info_by_id($hive_id) {
+        $query = "SELECT id, name, f_owner FROM hives WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$hive_id]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+    public function get_all() {
+        $query = "SELECT id, name, f_owner AS owner FROM hives";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute();
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+    public function del_strict($lora_eui, $account_id) {
+        $query = "DELETE FROM hives WHERE id = ? AND f_owner = ?";
+        $stmt = $this->connection->prepare($query);
+        if ($stmt->execute([strtoupper($lora_eui), $account_id]))
+            return true;
+        else 
+            return false;
+    }
+
+    public function del($lora_eui) {
+        $query = "DELETE FROM hives WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+        if ($stmt->execute([strtoupper($lora_eui)]))
+            return true;
+        else 
+            return false;
+    }
+}
+
+class Alert extends DatabaseContext {
+    public function insert($hive_id, $rule, $value) {
+        $query = "INSERT INTO alerts (f_hive, rule, value) VALUES (?, ?, ?)";
+        $stmt = $this->connection->prepare($query);
+        if ($stmt->execute([$hive_id, $rule, $value]))
+            return true;
+        else 
+            return false;
+    }
+
+    public function get_info_by_owner($account_id) {
+        $query = "SELECT t1.id, t1.rule, t1.value, t1.last_notify, t1.f_hive AS hive FROM alerts AS t1 INNER JOIN hives AS t2 ON t1.f_hive = t2.id WHERE t2.f_owner = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$account_id]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 }
 
