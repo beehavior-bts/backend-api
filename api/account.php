@@ -3,10 +3,13 @@
 require '../database/model.php';
 
 header("Content-Type: application/json; charset=UTF-8");
+<<<<<<< HEAD
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Max-Age: 3000');
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, X-Authorization");
+=======
+>>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
 
 $payload = decode_jwt_token(strval($_SERVER["HTTP_X_AUTHORIZATION"]));
 
@@ -17,6 +20,7 @@ if ($payload["is_admin"]) {
         $dbaccount->insert($content["email"], $content["username"]);
     } elseif ($_SERVER["REQUEST_METHOD"] == "GET") {
         $dbaccount = new Account();
+<<<<<<< HEAD
         $dbhive = new Hive();
         $hivecmd = $dbhive->get_all();
         $accountcmd = $dbaccount->get_all();
@@ -34,6 +38,9 @@ if ($payload["is_admin"]) {
                 }
             }
         }
+=======
+        $accountcmd = $dbaccount->get_all();
+>>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
         $resp = json_encode(array(
             "title" => "OK",
             "description" => "Account list getted successful",
@@ -42,10 +49,13 @@ if ($payload["is_admin"]) {
             )
         ));
         echo $resp;
+<<<<<<< HEAD
     } elseif ($_SERVER["REQUEST_METHOD"] == "DELETE") {
 	$content = json_decode(trim(file_get_contents("php://input")), true);
         $dbaccount = new Account();
         $dbaccount->del($content['id']);
+=======
+>>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
     }
 } else {
     http_response_code(401);
