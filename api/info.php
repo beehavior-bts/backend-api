@@ -3,20 +3,16 @@
 require '../database/model.php';
 
 header("Content-Type: application/json; charset=UTF-8");
-<<<<<<< HEAD
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Max-Age: 3000');
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, X-Authorization");
-=======
->>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
 
 $payload = decode_jwt_token(strval($_SERVER["HTTP_X_AUTHORIZATION"]));
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $dbaccount = new Account();
     $dbhive = new Hive();
-<<<<<<< HEAD
     $dbalert = new Alert();
 
     $infocmd = $dbaccount->get_info_by_id($payload["uid"]);
@@ -40,13 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $infocmd["id"] = intval($infocmd["id"]);
     $infocmd["hives"] = $infohive;
     $infocmd["is_admin"] = boolval($infocmd["is_admin"]);
-=======
-
-    $infocmd = $dbaccount->get_info_by_id($payload["uid"]);
-    $infohive = $dbhive->get_info_by_owner($payload["uid"]);
-
-    $infocmd["hives"] = $infohive;
->>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
 
     $resp = json_encode(array(
         "title" => "OK",

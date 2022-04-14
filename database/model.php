@@ -225,17 +225,9 @@ class Alert extends DatabaseContext {
     }
 
     public function get_info_by_owner($account_id) {
-<<<<<<< HEAD
         $query = "SELECT t1.id, t1.rule, t1.value, t1.last_notify, t1.f_hive AS hive FROM alerts AS t1 INNER JOIN hives AS t2 ON t1.f_hive = t2.id WHERE t2.f_owner = ?";
         $stmt = $this->connection->prepare($query);
         $stmt->execute([$account_id]);
-=======
-        $query = "SELECT id, name FROM hives WHERE f_owner = :id";
-        $stmt = $this->connection->prepare($query);
-        $stmt->execute([
-            ':id' => $account_id
-        ]);
->>>>>>> 62696121aa1911b51f2f13d99b67b780a82637fb
         $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $res;
     }
