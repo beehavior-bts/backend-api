@@ -6,7 +6,7 @@ header("Content-Type: application/json; charset=UTF-8");
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Max-Age: 3000');
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
-header("Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, X-Authorization");
+header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = json_decode(trim(file_get_contents("php://input")), true);

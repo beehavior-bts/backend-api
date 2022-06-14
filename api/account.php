@@ -14,6 +14,7 @@ if ($payload["is_admin"]) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $content = json_decode(trim(file_get_contents("php://input")), true);
         $dbaccount = new Account();
+	//$dbaccount->insert($_GET["email"], $_GET["username"]);
         $dbaccount->insert($content["email"], $content["username"]);
     } elseif ($_SERVER["REQUEST_METHOD"] == "GET") {
         $dbaccount = new Account();
@@ -43,11 +44,29 @@ if ($payload["is_admin"]) {
         ));
         echo $resp;
     } elseif ($_SERVER["REQUEST_METHOD"] == "DELETE") {
-	$content = json_decode(trim(file_get_contents("php://input")), true);
+        parse_str(file_get_contents("php://input"), $post_vars);
         $dbaccount = new Account();
-        $dbaccount->del($content['id']);
+        $dbaccount->del($post_vars["id"]);
+    } elseif ($_SERVER["REQUEST_METHOD"] == "PUT") {
+        parse_str(file_get_contents("php://input"), $post_vars);
+        echo $post_vars["username"];
+     	#$fp = fopen("putaccount.txt", "w");
+     	#fwrite($fp, $post_vars["username"]);
+     	#fclose($fp);
+        $dbaccount = new Account();
+		$dbaccount->update_all($payload["uid"], $post_vars["username"], $post_vars["email"], $post_vars["phone"]);
     }
 } else {
-    http_response_code(401);
+    if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+        parse_str(file_get_contents("php://input"), $post_vars);
+        echo $post_vars["username"];
+     	#$fp = fopen("putaccount.txt", "w");
+     	#fwrite($fp, $post_vars["username"]);
+     	#fclose($fp);
+        $dbaccount = new Account();
+		$dbaccount->update_all($payload["uid"], $post_vars["username"], $post_vars["email"], $post_vars["phone"]);
+    } else {
+    	http_response_code(401);
+    }
 }
 ?>

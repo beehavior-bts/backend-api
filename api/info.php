@@ -4,9 +4,11 @@ require '../database/model.php';
 
 header("Content-Type: application/json; charset=UTF-8");
 header('Access-Control-Allow-Origin: *');
+// header('Access-Control-Allow-Origin: https://prc2022.lycee-lgm.fr');
 header('Access-Control-Max-Age: 3000');
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
-header("Access-Control-Allow-Headers: Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, X-Authorization");
+header("Access-Control-Allow-Methods: GET, OPTIONS, POST, DELETE, PUT, UPDATE");
+header("Access-Control-Allow-Headers: Access-Control-Request-Header, Access-Control-Request-Origin, Content-Type, Accept, Vary, Host, X-Requested-With, Referer, Origin, X-Authorization");
+// header("Access-Control-Expose-Headers: Content-Type, Corentin");
 
 $payload = decode_jwt_token(strval($_SERVER["HTTP_X_AUTHORIZATION"]));
 

@@ -52,6 +52,25 @@ function decode_jwt_token($token) {
     return $array_decoded;
 }
 
+function send_mail($dest_email, $subject, $body) {
+        $mail = new PHPMailer();
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = EMAIL_SMTP;  // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Port = 465;
+        $mail->Username = EMAIL_USER;                 // SMTP username
+        $mail->Password = EMAIL_PASS;                           // SMTP password
+        $mail->SMTPSecure = 'ssl';                           // Enable encryption, 'ssl' also accepted
+        $mail->From = EMAIL_ADDR;
+        $mail->FromName = 'Beehavior Service';
+        $mail->addAddress($dest_email);               // Name is optional
+        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+
+        return $mail->send();
+}
+
 class DatabaseContext {
     private $user = DB_USER;
     private $password = DB_PASS;
@@ -130,23 +149,11 @@ class Account extends DatabaseContext {
         $raw_password = join("", $lst_password);
         $password = password_hash($raw_password, PASSWORD_BCRYPT);
 
-        $mail = new PHPMailer();
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = EMAIL_SMTP;  // Specify main and backup SMTP servers
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Port = 465;
-        $mail->Username = EMAIL_USER;                 // SMTP username
-        $mail->Password = EMAIL_PASS;                           // SMTP password
-        $mail->SMTPSecure = 'ssl';                           // Enable encryption, 'ssl' also accepted
-        $mail->From = EMAIL_ADDR;
-        $mail->FromName = 'Beehavior Service';
-        $mail->addAddress($email);               // Name is optional
-        $mail->isHTML(true);                                  // Set email format to HTML
-        $mail->Subject = 'Beehavior Account Credentials';
-        $mail->Body    = "<h4>Hey ".$username." ! Here are your credentials for Beehavior website</h4><p>Email : <b>".$email."</b></p><p>Password : <b>".$raw_password."</b></p>";
+        $sub = 'Beehavior Account Credentials';
+        $bod = "<h4>Hey ".$username." ! Here are your credentials for Beehavior website</h4><p>Email : <b>".$email."</b></p><p>Password : <b>".$raw_password."</b></p>";
 
-        if(!$mail->send()) {
-            echo $mail->ErrorInfo;
+        if(!send_mail($email, $sub, $bod)) {
+            echo "FAILED TO SEND EMAIL";
         } else {
             $query = "INSERT INTO prc2022.accounts (email, username, password) VALUES ('".$email."', '".$username."', '".$password."')";
             $stmt = $this->connection->prepare($query);
@@ -157,6 +164,15 @@ class Account extends DatabaseContext {
         }
         // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
     }
+
+    public function update_all($account_id, $username, $email, $phone) {
+        $query = "UPDATE accounts SET username = ?, email = ?, phone = ? WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+        if ($stmt->execute([$username, $email, $phone, $account_id]))
+            return true;
+        else
+            return false;
+    } 
 }
 
 class Hive extends DatabaseContext {
@@ -231,19 +247,47 @@ class Alert extends DatabaseContext {
         $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $res;
     }
+
+    public function get_info_by_hive($lora_eui) {
+        $query = "SELECT * FROM alerts WHERE f_hive = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$lora_eui]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
 }
 
 /**
  * Decrit les données monitorer d'une ruche dans la base de données
  */
 class Metric extends DatabaseContext {
-    public function insert($lora_eui, $humidity, $temp, $mass) {
-        $query = "INSERT INTO prc2022.metrics (f_hive, humidity, temperature, mass) VALUES ('".$lora_eui."', '".$humidity."', '".$temp."', '".$mass."')";
+    public function insert($lora_eui, $humidity, $temp, $mass, $created_on) {
+        $query = "INSERT INTO prc2022.metrics (f_hive, humidity, temperature, mass, created_on) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->connection->prepare($query);
-        if ($stmt->execute())
+        if ($stmt->execute([$lora_eui, $humidity, $temp, $mass, $created_on]))
             return true;
         else 
             return false;
+    }
+
+    public function getData($lora_eui) {
+	// $dt_ant = time() - (intval($days)*24*60*60);
+	// $formdate = date("Y-m-d H:i:s", $dt_ant);
+	$query = "SELECT * FROM metrics WHERE f_hive = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$lora_eui]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+    public function get_by_interval($lora_eui, $start, $end) {
+        // $dt_ant = time() - (intval($days)*24*60*60);
+	// $formdate = date("Y-m-d H:i:s", $dt_ant);
+	$query = "SELECT * FROM metrics WHERE f_hive = ? AND created_on >= ? AND created_on <= ? AND ? > ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$lora_eui, $start, $end, $end, $start]);
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 }
 ?>
