@@ -17,34 +17,16 @@ $humidity = intval($metrics[0]);
 $temperature = floatval($metrics[1]);
 $mass = floatval($metrics[2]);
 
-/*
-$dbalert = new Alert();
-$dbhive = new Hive();
-$dbaccount = new Account();
-$owner_email = $dbaccount->get_info_by_id($dbhive->get_info_by_id($end_device_id)["f_owner"])["email"];
-$r = $dbalert->get_info_by_hive($end_device_id);
-*/
-
 $dbmetric = new Metric();
-$fp = fopen("metrictest.txt", "w");
+
 $insert_time = explode(".", $received_at)[0];
-$aze = join(" ", explode("T", $insert_time));
-fwrite($fp, "device_id : ".$end_device_id."\nhumidite : ".$humidity."\ntemperature : ".$temperature."\nmass : ".$mass."\ndate : ".$received_at."\ntime explode : ".$aze);
-fclose($fp);
+$sql_insert_date = join(" ", explode("T", $insert_time));
 
-$dbmetric->insert($end_device_id, $humidity, $temperature, $mass, $aze);
-// createToken();
-
-// $dbaccount = new Account();
-// $dbaccount->insert("ristich.esteban.lgm@gmail.com", "Estéban");
-/*
-$dbaccount = new Account();
-*/
+$dbmetric->insert($end_device_id, $humidity, $temperature, $mass, $sql_insert_date);
 
 $resp = json_encode(array(
     "title" => "SAVED",
     "description" => "Metric has been saved in database"
 ));
-// var_dump($r);
 echo $resp;
 ?>
